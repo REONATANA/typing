@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>TYPEMASTER</title>
+  <style>
+    body {
+      background-color: #1D3750;
+      color: white;
+      font-family: "Yu Gothic";
+      text-align: left;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 70px;
+      margin-bottom: 10px;
+      margin-top: 150px;
+    }
+    .font {
+          font-size: 90px;
+          color: #A9CEE1;
+    }
+    .maintext {
+      font-size: 30px;
+      text-align: left;
+      margin-bottom: 20px;
+      margin-left: 110px;
+    }
+    .maintext2 {
+      font-size: 30px;
+      text-align: left;
+      margin-bottom: 30px;
+    }
+    button {
+      background-color: #F5752E;
+      color: white;
+      font-size: 45px;
+      padding: 15px 20px;
+      margin-left: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 20px;
+      font-family: "Yu Gothic";
+      font-weight: 700;
+    }
+    .fixed-image1 {
+      position: fixed;
+      bottom: 0px;
+      right: 0px;
+      width: 700px;
+    }
+    .fixed-image2 {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 350px;
+    }
+    .fixed-image3 {
+      position: fixed;
+      bottom: 0px;
+      left: 0px;
+      width: 771px;
+    }
+    .fixed-image4 {
+          position:absolute;
+          bottom: 300px;
+          right: 200px;
+          width:400px;
+          transform:rotate(-30deg);
+    }
+    .stats-button {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      font-size: 30px;
+      padding: 10px 20px;
+      background-color: #F5752E;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    <h1><span class="font">TOEIC</span>タイピング</h1>
+    <div class="maintext2">単語を学びながらタイピングしよう！<br>キーボードを押したらタイマーが開始されるよ</div>
+    <button onclick="location.href='/typing?mode=jp'">600点レベル</button>
+    <button onclick="location.href='/typing?mode=en'">730点レベル</button>
+    <button class="stats-button" onclick="location.href='/stats'">📊 成績を見る</button>
+    <img src="{{ url_for('static', filename='画像2.png') }}" alt="PC" class="fixed-image1">
+    <img src="{{ url_for('static', filename='ロゴ.png') }}" alt="ロゴ" class="fixed-image2">
+    <img src="{{ url_for('static', filename='画像3.png') }}" alt="線" class="fixed-image3">
+    <img src="{{ url_for('static', filename='画像英語.png') }}" alt="英語" class="fixed-image4">
+</body>
+</html>

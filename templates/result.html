@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>結果ページ</title>
+  <style>
+    body {
+      background-color: #1D3750;
+      color: white;
+      font-family: "Yu Gothic", sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 50px;
+      margin-bottom: 30px;
+    }
+      .result-box {
+          font-family: sans-serif;
+          background: #A9CEE1;
+          color: red;
+          border-radius: 50px;
+          padding: 30px;
+          font-size: 60px;
+          width: 600px;
+          margin: 0 auto 30px auto;
+          font-weight: 600;
+      }
+      .seikai {
+          color: #21435F;
+          display: flex;
+          font-size: 25px;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 10px;
+      }
+      .vest {
+          color: #21435F;
+          font-size: 30px;
+      }
+
+    button {
+      font-size: 25px;
+      padding: 10px 30px;
+      margin: 10px;
+      background-color: #F5752E;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    <h1>結果</h1>
+    <div class="result-box">
+        
+            <div id="finalScore">スコア: </div>
+            <div class="vest"><div id="best">ベスト:</div></div>
+            <div class="seikai">
+                <div id="charCount">正解文字数: </div>&nbsp;
+                <div id="wpm">WPM: </div>
+            </div>
+    </div>
+
+    <button onclick="location.href='/'">ホームへ</button>
+    <button id="retryBtn">もう一度</button>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const score = params.get("score");
+        const chars = params.get("chars");
+        const wpm = params.get("wpm");
+        const mode = params.get("mode") || "jp"; 
+
+        const best = localStorage.getItem("bestScore") || 0;
+        if (parseInt(score) > parseInt(best)) {
+            localStorage.setItem("bestScore", score);
+        }
+
+        document.getElementById("finalScore").textContent = ` ${score} `;
+        document.getElementById("charCount").textContent = `文字数: ${chars} 文字`;
+        document.getElementById("wpm").textContent = `WPM: ${wpm}`;
+        document.getElementById("best").textContent = `VEST: ${localStorage.getItem("bestScore")} `;
+        document.getElementById("retryBtn").onclick = () => {
+            location.href = `/typing?mode=${mode}`;
+        };
+    </script>
+</body>
+</html>

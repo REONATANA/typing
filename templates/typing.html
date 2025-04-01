@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>タイピング練習</title>
+  <style>
+    body {
+     background-color: #1D3750;
+     color: white;
+     font-family: "Yu Gothic", sans-serif;
+     padding: 100px;
+    }
+      #sentence {
+          font-size: 50px;
+          margin-bottom: 20px;
+          margin-top: 30px;
+          font-weight: 900;
+      }
+    input { width: 100%; padding: 10px; font-size: 50px; }
+    #result,  #scoreDisplay { margin-top: 20px; font-weight: bold; font-size: 30px; }
+    #timer {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 50px;
+      text-align: right;
+    }
+    .restart-button {
+          margin-top:0px;
+          padding: 10px 20px;
+          font-size: 20px;
+          background-color: #F5752E;
+          color: white;
+          border: none;
+          border-radius: 20px;
+          font-family: "Yu Gothic";
+          font-weight: 900;
+      }
+    .home-button {
+          position: fixed;
+          top: 30px;
+          left: 90px;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+    }
+
+    .home-button img {
+              width: 100px; /* ←ここで画像サイズを調整できる */
+              height: auto;
+    }
+      #history { margin-top: 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <button class="home-button" onclick="location.href='/'">
+  <img src="{{ url_for('static', filename='ホームボタン.png') }}" alt="ホーム" />
+  </button>
+  <div id="timer">残り時間: 100秒</div>
+  <div id="sentence">{{ sentence }}</div>
+  <input
+    type="text"
+    id="input"
+    placeholder="ここに入力..."
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+    inputmode="none"
+    style="ime-mode: disabled;"
+  />
+  <div id="scoreDisplay">スコア: 0 点</div>
+  <div id="result"></div>
+  <button class="restart-button" id="restart">リスタート</button>
+  <div id="history"><strong>過去の成績:</strong><ul id="historyList"></ul></div>
+
+
+<script>
+  let sentence = "{{ sentence }}";
+  const input = document.getElementById("input");
+  const result = document.getElementById("result");
+  const timerDisplay = document.getElementById("timer");
+  const scoreDisplay = document.getElementById("scoreDisplay");
+  const restartBtn = document.getElementById("restart");
+  const historyList = document.getElementById("historyList");
+
+  let timeLeft = 100;
+  let score = 0;
+  let totalChars = 0;
+  let started = false;
+  let timer;
+
+  function startTimer() {
+  timer = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = `残り時間: ${timeLeft}秒`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      input.disabled = true;
+      const wpm = (totalChars / 5 / 100 * 60).toFixed(2);
+        const finalScore = score;
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get("mode") || "jp";
+      saveHistory(finalScore, totalChars, wpm);
+      // ⏬ 結果ページへ自動遷移
+        location.href = `/result?score=${finalScore}&chars=${totalChars}&wpm=${wpm}&mode=${mode}`;
+    }
+  }, 1000);
+}
+
+  function saveHistory(score, chars, wpm) {
+    const record = {
+      date: new Date().toLocaleString(),
+      score: score,
+      chars: chars,
+      wpm: wpm
+    };
+    const history = JSON.parse(localStorage.getItem("typingHistory") || "[]");
+    history.unshift(record);
+    localStorage.setItem("typingHistory", JSON.stringify(history));
+    showHistory();
+  }
+
+  function showHistory() {
+    const history = JSON.parse(localStorage.getItem("typingHistory") || "[]");
+    historyList.innerHTML = "";
+    history.slice(0, 5).forEach(r => {
+      const li = document.createElement("li");
+      li.textContent = `${r.date} - ${r.score}点 (${r.chars}文字, WPM: ${r.wpm})`;
+      historyList.appendChild(li);
+    });
+  }
+
+  input.addEventListener("keydown", (e) => {
+    if (!started) {
+      started = true;
+      startTimer();
+    }
+
+    if (e.key === "Enter" && input.value === sentence) {
+      const charCount = sentence.length;
+      score += charCount * 100;
+      totalChars += charCount;
+      scoreDisplay.textContent = `スコア: ${score} 点`;
+      input.value = "";
+      fetch(window.location.href)
+        .then(res => res.text())
+        .then(html => {
+          const temp = document.createElement("html");
+          temp.innerHTML = html;
+          const newSentence = temp.querySelector("#sentence").textContent;
+          sentence = newSentence;
+          document.getElementById("sentence").textContent = sentence;
+        });
+    }
+  });
+  restartBtn.addEventListener("click", () => {
+        location.reload();
+  });
+  showHistory();
+</script>
+</body>
+</html>
